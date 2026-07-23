@@ -8,6 +8,7 @@ import os
 import random
 import string
 import logging
+from functools import wraps
 from flask import Flask, request, jsonify, session, redirect, url_for, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
@@ -24,6 +25,7 @@ DB_HOST = os.environ.get('DB_HOST', 'localhost')
 DB_USER = os.environ.get('DB_USER', 'root')
 DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
 DB_NAME = os.environ.get('DB_NAME', 'ecotrack_db')
+DB_PORT = int(os.environ.get('DB_PORT', '3306'))
 
 def get_db_connection():
     """Establishes connection to MySQL database with graceful fallback."""
@@ -33,6 +35,7 @@ def get_db_connection():
             user=DB_USER,
             password=DB_PASSWORD,
             database=DB_NAME,
+            port=DB_PORT,
             connect_timeout=3
         )
         if connection.is_connected():
@@ -55,12 +58,37 @@ mock_db = {
             'eco_score': 82
         }
     ],
+    'admins': [
+        {
+            'id': 1,
+            'username': 'admin',
+            'email': 'admin@ecotrack.org',
+            'password_hash': generate_password_hash('Admin@123')
+        }
+    ],
     'verification_codes': {}
 }
 
 def generate_verification_code():
     """Generates a random 6-character numeric verification code."""
     return ''.join(random.choices(string.digits, k=6))
+
+def admin_required(view):
+    """Require an authenticated administrator for a page or API endpoint."""
+    @wraps(view)
+    def wrapped_view(*args, **kwargs):
+        if 'admin_id' not in session:
+            if request.path.startswith('/api/'):
+                return jsonify({'success': False, 'message': 'Administrator access required.'}), 403
+            return redirect(url_for('admin_login_page'))
+        return view(*args, **kwargs)
+    return wrapped_view
+
+@app.before_request
+def protect_admin_static_page():
+    """Keep direct requests for the static admin document behind the admin session."""
+    if request.path == '/admin.html' and 'admin_id' not in session:
+        return redirect(url_for('admin_login_page'))
 
 # ----------------------------------------------------------------
 # HTML PAGE SERVING (Routing from root)
@@ -84,6 +112,15 @@ def forgot_password_page():
 @app.route('/verify-email')
 def verify_email_page():
     return send_from_directory('.', 'verify-email.html')
+
+@app.route('/admin-login')
+def admin_login_page():
+    return send_from_directory('.', 'admin-login.html')
+
+@app.route('/admin')
+@admin_required
+def admin_page():
+    return send_from_directory('.', 'admin.html')
 
 # ----------------------------------------------------------------
 # API ENDPOINTS
@@ -220,6 +257,7 @@ def api_login():
                 session['user_id'] = user['id']
                 session['username'] = user['username']
                 session['email'] = user['email']
+                session.pop('admin_id', None)
                 return jsonify({'success': True, 'message': 'Login successful!', 'username': user['username']})
             else:
                 return jsonify({'success': False, 'message': 'Invalid email or password.'}), 401
@@ -238,9 +276,59 @@ def api_login():
                 session['user_id'] = user['id']
                 session['username'] = user['username']
                 session['email'] = user['email']
+                session.pop('admin_id', None)
                 return jsonify({'success': True, 'message': 'Login successful (Mock DB)!', 'username': user['username']})
         
         return jsonify({'success': False, 'message': 'Invalid email or password (Mock DB).'}), 401
+
+@app.route('/api/admin/login', methods=['POST'])
+def api_admin_login():
+    data = request.get_json() or {}
+    identity = data.get('identity', '').strip()
+    password = data.get('password', '')
+
+    if not identity or not password:
+        return jsonify({'success': False, 'message': 'Admin username/email and password are required.'}), 400
+
+    conn = get_db_connection()
+    if conn:
+        try:
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(
+                'SELECT id, username, email, password_hash FROM admin WHERE email = %s OR username = %s',
+                (identity, identity)
+            )
+            admin = cursor.fetchone()
+            if admin and check_password_hash(admin['password_hash'], password):
+                session.clear()
+                session['admin_id'] = admin['id']
+                session['admin_username'] = admin['username']
+                session['admin_email'] = admin['email']
+                return jsonify({'success': True, 'message': 'Admin login successful.'})
+        except Error as e:
+            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
+        finally:
+            conn.close()
+    else:
+        for admin in mock_db['admins']:
+            if identity in (admin['email'], admin['username']) and check_password_hash(admin['password_hash'], password):
+                session.clear()
+                session['admin_id'] = admin['id']
+                session['admin_username'] = admin['username']
+                session['admin_email'] = admin['email']
+                return jsonify({'success': True, 'message': 'Admin login successful (Mock DB).'})
+
+    return jsonify({'success': False, 'message': 'Invalid administrator credentials.'}), 401
+
+@app.route('/api/admin/session', methods=['GET'])
+@admin_required
+def api_admin_session():
+    return jsonify({
+        'success': True,
+        'is_admin': True,
+        'username': session['admin_username'],
+        'email': session['admin_email']
+    })
 
 @app.route('/api/forgot-password', methods=['POST'])
 def api_forgot_password():
@@ -346,6 +434,6 @@ if __name__ == '__main__':
     print("\n" + "="*50)
     print("EcoTrack Backend Initialized Successfully!")
     print("Serving from current directory. Defaulting to Dark Mode landing page.")
-    print("Click http://127.0.0.1:5000 to launch landing page.")
+    print("Click http://127.0.0.1:8080 to launch landing page.")
     print("="*50 + "\n")
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8080)

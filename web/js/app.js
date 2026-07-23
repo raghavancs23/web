@@ -16,8 +16,12 @@ const NAV_LINKS = [
   { href: 'profile.html',          icon: 'fa-user-circle',     label: 'My Profile',        section: 'ACCOUNT' },
   { href: 'feedback.html',         icon: 'fa-star',            label: 'Feedback',          section: 'ACCOUNT' },
   { href: 'contact.html',          icon: 'fa-headset',         label: 'Contact / FAQ',     section: 'ACCOUNT' },
-  { href: 'admin.html',            icon: 'fa-shield-halved',   label: 'Admin Panel',       section: 'ADMIN', badge: 'Admin' },
+  { href: 'admin',                 icon: 'fa-shield-halved',   label: 'Admin Panel',       section: 'ADMIN', badge: 'Admin' },
 ];
+
+function isAdminSession() {
+  return localStorage.getItem('eco_is_admin') === 'true';
+}
 
 const SESSION_USER = {
   name: localStorage.getItem('eco_username') || 'Eco Champion',
@@ -29,10 +33,11 @@ const SESSION_USER = {
 // RENDER SIDEBAR
 // ----------------------------------------------------------------
 function renderSidebar(activePage) {
-  const sections = [...new Set(NAV_LINKS.map(l => l.section))];
+  const visibleLinks = NAV_LINKS.filter(link => link.section !== 'ADMIN' || isAdminSession());
+  const sections = [...new Set(visibleLinks.map(l => l.section))];
   let sectionsHtml = '';
   sections.forEach(section => {
-    const links = NAV_LINKS.filter(l => l.section === section);
+    const links = visibleLinks.filter(l => l.section === section);
     sectionsHtml += `<div class="sidebar-menu-section">${section}</div>`;
     links.forEach(link => {
       const isActive = link.href === activePage;
@@ -206,6 +211,7 @@ async function logoutUser(e) {
   try { await fetch('/api/logout'); } catch {}
   localStorage.removeItem('eco_username');
   localStorage.removeItem('eco_score');
+  localStorage.removeItem('eco_is_admin');
   showAppToast('Logged out successfully!', 'success');
   setTimeout(() => window.location.href = 'login.html', 1200);
 }

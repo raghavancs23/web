@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack - Admin Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    .admin-auth { min-height:100vh; display:grid; place-items:center; position:relative; overflow:hidden; padding:24px; }
+    .admin-auth-card { width:min(100%,440px); position:relative; z-index:2; }
+    .admin-auth-card .glass-card { padding:42px; border:1px solid rgba(255,214,0,.24); box-shadow:0 24px 70px rgba(0,0,0,.3); }
+    .admin-mark { width:54px; height:54px; display:grid; place-items:center; margin:0 auto 18px; border-radius:16px; color:var(--accent-warm); background:rgba(255,214,0,.1); border:1px solid rgba(255,214,0,.25); font-size:1.25rem; }
+    .admin-label { display:block; margin-bottom:8px; color:var(--text-primary); font-size:.8rem; font-weight:700; }
+    .admin-auth input { width:100%; min-height:50px; padding:12px 14px; border:1px solid var(--border-color); border-radius:10px; background:rgba(255,255,255,.04); color:var(--text-primary); outline:none; }
+    .admin-auth input:focus { border-color:var(--accent-warm); box-shadow:0 0 0 4px rgba(255,214,0,.1); }
+    .admin-auth button { width:100%; min-height:52px; border:0; border-radius:10px; background:linear-gradient(135deg,#f9a825,#d68900); color:#111827; font-weight:800; }
+    .admin-auth button:disabled { opacity:.7; cursor:wait; }
+    .admin-message { min-height:20px; margin-top:16px; text-align:center; color:#ef9a9a; font-size:.82rem; }
+  </style>
+</head>
+<body data-theme="dark">
+  <main class="admin-auth">
+    <div class="hero-bg"></div><div class="hero-grid"></div>
+    <div class="admin-auth-card">
+      <a href="/" class="read-more mb-4 d-inline-flex"><i class="fas fa-arrow-left"></i> Back to EcoTrack</a>
+      <div class="glass-card">
+        <div class="text-center mb-4">
+          <div class="admin-mark"><i class="fas fa-shield-halved"></i></div>
+          <div style="color:var(--accent-warm);font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase">Restricted workspace</div>
+          <h1 class="h3 fw-bold mt-2 mb-2">Administrator login</h1>
+          <p class="text-muted-custom mb-0">Use your admin credentials to continue.</p>
+        </div>
+        <form id="adminLoginForm">
+          <div class="form-group mb-3"><label class="admin-label" for="identity">Username or email</label><input id="identity" autocomplete="username" placeholder="admin@ecotrack.org" required></div>
+          <div class="form-group mb-4"><label class="admin-label" for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Enter admin password" required></div>
+          <button type="submit" id="adminLoginButton"><i class="fas fa-lock-open me-2"></i>Enter Admin Panel</button>
+          <div class="admin-message" id="adminMessage" role="alert"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script>
+    const form = document.getElementById('adminLoginForm');
+    const button = document.getElementById('adminLoginButton');
+    const message = document.getElementById('adminMessage');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Checking access...';
+      message.textContent = '';
+      try {
+        const response = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ identity:document.getElementById('identity').value, password:document.getElementById('password').value }) });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.message || 'Invalid administrator credentials.');
+        localStorage.setItem('eco_is_admin', 'true');
+        window.location.href = 'admin';
+      } catch (error) {
+        message.textContent = error.message || 'Unable to sign in as administrator.';
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-lock-open me-2"></i>Enter Admin Panel';
+      }
+    });
+  </script>
+</body>
+</html>

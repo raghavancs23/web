@@ -342,6 +342,10 @@ function initContactForm() {
 /* ----------------------------------------------------------------
    9. TOAST NOTIFICATION SYSTEM
 ---------------------------------------------------------------- */
+function initToastSystem() {
+  // The toast container is created on demand by showToast.
+}
+
 function showToast(message, type = 'success') {
   let container = document.querySelector('.toast-container');
   if (!container) {

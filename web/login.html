@@ -19,23 +19,9 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/auth.css">
 
   <style>
-    .auth-container {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-      padding: 40px 0;
-    }
-    .auth-card {
-      max-width: 440px;
-      width: 100%;
-      position: relative;
-      z-index: 10;
-    }
   </style>
 </head>
 <body data-theme="dark">
@@ -45,7 +31,14 @@
     <div class="hero-grid"></div>
 
     <div class="container-custom">
-      <div class="d-flex justify-content-center">
+      <div class="auth-layout auth-layout-login">
+        <div class="auth-intro">
+          <a href="/" class="auth-brand"><span class="brand-icon"><i class="fas fa-leaf text-white"></i></span><span><b>Eco</b>Track</span></a>
+          <div class="auth-kicker"><span></span> Personal climate intelligence</div>
+          <h1>Make every day a little lighter.</h1>
+          <p>Turn ordinary lifestyle choices into a clear carbon story, then use practical recommendations to lower your impact.</p>
+          <div class="auth-proof"><i class="fas fa-chart-line"></i><div><strong>See your progress</strong><span>One calm dashboard for the choices that matter.</span></div></div>
+        </div>
         <div class="auth-card">
           
           <!-- Back Link -->
@@ -55,12 +48,11 @@
 
           <!-- Glassmorphic Card -->
           <div class="glass-card">
-            <div class="text-center mb-4">
-              <div class="brand-icon mx-auto mb-3">
-                <i class="fas fa-leaf text-white"></i>
-              </div>
-              <h2 class="fw-black mb-1">Welcome Back</h2>
+            <div class="auth-heading mb-4">
+              <div class="auth-heading-mark"><i class="fas fa-arrow-right-to-bracket"></i></div>
+              <div><div class="auth-eyebrow">Your impact, continued</div><h2 class="fw-black mb-1">Welcome back</h2>
               <p class="text-muted-custom">Sign in to track your carbon analytics dashboard.</p>
+              </div>
             </div>
 
             <!-- Pre-filled info helper for presentation testing -->
