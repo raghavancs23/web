@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack - AI Recommendations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/app.css">
+  <style>
+    /* AI Chat Box */
+    .chat-box { background:var(--bg-surface); border:1px solid var(--border-color); border-radius:var(--radius-lg); height:420px; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:14px; scroll-behavior:smooth; }
+    .chat-msg { max-width:80%; padding:12px 16px; border-radius:16px; font-size:0.875rem; line-height:1.6; animation:fadeSlideUp 0.3s ease; }
+    @keyframes fadeSlideUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+    .chat-msg.ai { background:rgba(0,200,83,0.08); border:1px solid rgba(0,200,83,0.15); color:var(--text-primary); border-radius:4px 16px 16px 16px; align-self:flex-start; }
+    .chat-msg.user { background:rgba(0,200,83,0.2); border:1px solid rgba(0,200,83,0.3); color:var(--text-primary); border-radius:16px 4px 16px 16px; align-self:flex-end; text-align:right; }
+    .chat-input-row { display:flex; gap:10px; margin-top:14px; }
+    .chat-input { flex:1; padding:12px 16px; background:var(--bg-surface); border:1.5px solid var(--border-color); border-radius:var(--radius-full); color:var(--text-primary); font-size:0.9rem; outline:none; transition:var(--transition-base); }
+    .chat-input:focus { border-color:var(--primary); box-shadow:0 0 0 3px rgba(0,200,83,0.1); }
+    .ai-avatar { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--secondary)); display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:white; flex-shrink:0; }
+    .typing-indicator { display:flex; gap:4px; align-items:center; padding:10px 16px; }
+    .typing-dot { width:6px; height:6px; background:var(--primary); border-radius:50%; animation:typing 1.2s infinite; }
+    .typing-dot:nth-child(2){ animation-delay:0.2s; }
+    .typing-dot:nth-child(3){ animation-delay:0.4s; }
+    @keyframes typing { 0%,100%{transform:translateY(0);opacity:0.4;} 50%{transform:translateY(-6px);opacity:1;} }
+
+    /* Tip Cards */
+    .tip-card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:var(--radius-md); padding:20px; display:flex; gap:14px; align-items:flex-start; transition:var(--transition-base); cursor:pointer; }
+    .tip-card:hover { border-color:rgba(0,200,83,0.3); transform:translateX(4px); }
+    .tip-icon { width:40px; height:40px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+
+    /* Challenge Card */
+    .challenge-card { background: linear-gradient(135deg,rgba(0,200,83,0.08),rgba(0,137,123,0.04)); border:1px solid rgba(0,200,83,0.2); border-radius:var(--radius-lg); padding:20px; transition:var(--transition-base); }
+    .challenge-card:hover { border-color:rgba(0,200,83,0.4); transform:translateY(-4px); }
+    .challenge-progress { height:6px; background:var(--border-color); border-radius:var(--radius-full); margin-top:12px; overflow:hidden; }
+    .challenge-fill { height:100%; background:linear-gradient(90deg,var(--primary),var(--accent)); border-radius:var(--radius-full); }
+  </style>
+</head>
+<body data-theme="dark">
+<div class="app-layout">
+  <div id="sidebarContainer"></div>
+  <div class="main-content" id="mainContent">
+    <div id="topbarContainer"></div>
+    <div class="page-content">
+
+      <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+          <h1 class="page-header-title">🤖 AI Recommendation System</h1>
+          <p class="page-header-subtitle">Powered by Google Gemini — personalized tips based on your carbon footprint profile.</p>
+        </div>
+        <button class="btn-primary-custom" onclick="generateNewTips()">
+          <span>Generate New Tips</span>
+          <i class="fas fa-sparkles"></i>
+        </button>
+      </div>
+
+      <div class="row g-4">
+        <!-- Left: AI Chat Assistant -->
+        <div class="col-lg-5">
+          <div class="section-card h-100">
+            <div class="section-card-header">
+              <div class="section-card-icon icon-green" style="background:linear-gradient(135deg,rgba(0,200,83,0.2),rgba(0,137,123,0.15))">
+                <i class="fas fa-robot"></i>
+              </div>
+              <div>
+                <div class="section-card-title">EcoBot AI Assistant</div>
+                <div style="font-size:0.75rem;color:var(--primary)">● Online — Gemini Powered</div>
+              </div>
+            </div>
+
+            <div class="chat-box" id="chatBox">
+              <!-- Initial AI message -->
+              <div class="d-flex gap-2 align-items-start">
+                <div class="ai-avatar"><i class="fas fa-robot" style="font-size:0.7rem"></i></div>
+                <div class="chat-msg ai">👋 Hi! I'm EcoBot, your personal AI sustainability coach. Ask me anything about reducing your carbon footprint, eco-friendly alternatives, or weekly challenges!</div>
+              </div>
+              <div class="d-flex gap-2 align-items-start">
+                <div class="ai-avatar"><i class="fas fa-robot" style="font-size:0.7rem"></i></div>
+                <div class="chat-msg ai">Based on your latest calculation, your <b>transport emissions</b> are the highest at 35% of total output. I recommend switching to public transit for commutes under 10 km. 🚌</div>
+              </div>
+            </div>
+
+            <div class="chat-input-row">
+              <input type="text" class="chat-input" id="chatInput" placeholder="Ask EcoBot anything..." onkeydown="if(event.key==='Enter') sendChat()">
+              <button class="btn-primary-custom" style="padding:12px 18px" onclick="sendChat()">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Tips + Challenges -->
+        <div class="col-lg-7">
+          <!-- Personalized Tips -->
+          <div class="section-card mb-4">
+            <div class="section-card-header">
+              <div class="section-card-icon icon-gold"><i class="fas fa-lightbulb"></i></div>
+              <div class="section-card-title">Today's Personalized Eco Tips</div>
+            </div>
+            <div class="d-flex flex-column gap-3" id="tipsList">
+              <div class="tip-card">
+                <div class="tip-icon icon-teal"><i class="fas fa-bus"></i></div>
+                <div><div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Switch to Public Transport</div><div style="font-size:0.82rem;color:var(--text-secondary)">Replace 2 car trips per week with buses or trains. Saves up to 3.8 kg CO₂ weekly.</div></div>
+                <div class="ms-auto"><span class="pill pill-success" style="font-size:0.65rem;white-space:nowrap">-3.8 kg</span></div>
+              </div>
+              <div class="tip-card">
+                <div class="tip-icon icon-blue"><i class="fas fa-bolt"></i></div>
+                <div><div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Use LED Lighting</div><div style="font-size:0.82rem;color:var(--text-secondary)">Replace incandescent bulbs with LEDs — saves 2.1 kg CO₂ monthly on your electricity bill.</div></div>
+                <div class="ms-auto"><span class="pill pill-success" style="font-size:0.65rem;white-space:nowrap">-2.1 kg</span></div>
+              </div>
+              <div class="tip-card">
+                <div class="tip-icon icon-green"><i class="fas fa-seedling"></i></div>
+                <div><div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Try Meatless Mondays</div><div style="font-size:0.82rem;color:var(--text-secondary)">One plant-based day reduces food carbon by 1.8 kg weekly. Try lentils, tofu or chickpea meals.</div></div>
+                <div class="ms-auto"><span class="pill pill-success" style="font-size:0.65rem;white-space:nowrap">-1.8 kg</span></div>
+              </div>
+              <div class="tip-card">
+                <div class="tip-icon" style="background:rgba(33,150,243,0.12);color:#1976d2"><i class="fas fa-shower"></i></div>
+                <div><div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">Shorter Showers</div><div style="font-size:0.82rem;color:var(--text-secondary)">Reduce shower time from 10 to 5 minutes — saves 45L daily and 0.5 kg CO₂ per week.</div></div>
+                <div class="ms-auto"><span class="pill pill-success" style="font-size:0.65rem;white-space:nowrap">-0.5 kg</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weekly Challenges -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="section-card-icon icon-purple" style="background:rgba(156,39,176,0.12);color:#6a1b9a"><i class="fas fa-fire-flame-curved"></i></div>
+              <div class="section-card-title">Active Weekly Challenges</div>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="challenge-card">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div><div style="font-size:0.9rem;font-weight:700">🚶 Walk 5km This Week</div><div style="font-size:0.75rem;color:var(--text-secondary);margin-top:4px">Replace 2 car trips with walking</div></div>
+                    <span class="pill pill-success" style="font-size:0.65rem">Active</span>
+                  </div>
+                  <div class="challenge-progress mt-2"><div class="challenge-fill" style="width:60%"></div></div>
+                  <div class="d-flex justify-content-between mt-1" style="font-size:0.72rem;color:var(--text-secondary)"><span>3km done</span><span>5km goal</span></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="challenge-card">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div><div style="font-size:0.9rem;font-weight:700">🥦 3 Vegan Meals</div><div style="font-size:0.75rem;color:var(--text-secondary);margin-top:4px">Log 3 plant-based daily meals</div></div>
+                    <span class="pill pill-warning" style="font-size:0.65rem">In Progress</span>
+                  </div>
+                  <div class="challenge-progress mt-2"><div class="challenge-fill" style="width:33%"></div></div>
+                  <div class="d-flex justify-content-between mt-1" style="font-size:0.72rem;color:var(--text-secondary)"><span>1 done</span><span>3 goal</span></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="challenge-card">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div><div style="font-size:0.9rem;font-weight:700">💡 Zero AC 2 Days</div><div style="font-size:0.75rem;color:var(--text-secondary);margin-top:4px">Avoid AC use for 2 days</div></div>
+                    <span class="pill pill-success" style="font-size:0.65rem">Completed!</span>
+                  </div>
+                  <div class="challenge-progress mt-2"><div class="challenge-fill" style="width:100%"></div></div>
+                  <div class="d-flex justify-content-between mt-1" style="font-size:0.72rem;color:var(--primary)"><span>✅ 2/2 days done</span><span>+25 Eco pts</span></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="challenge-card">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div><div style="font-size:0.9rem;font-weight:700">♻️ Recycle 3 Items</div><div style="font-size:0.75rem;color:var(--text-secondary);margin-top:4px">Separate recyclables from waste</div></div>
+                    <span class="pill" style="background:rgba(244,67,54,0.1);color:#e53935;font-size:0.65rem">Not Started</span>
+                  </div>
+                  <div class="challenge-progress mt-2"><div class="challenge-fill" style="width:0%"></div></div>
+                  <div class="d-flex justify-content-between mt-1" style="font-size:0.72rem;color:var(--text-secondary)"><span>0 done</span><span>3 goal</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+
+<script src="js/app.js"></script>
+<script>
+  renderSidebar('recommendations.html');
+  renderTopbar('AI Recommendations', 'AI Recommendations');
+
+  // AI Responses pool
+  const aiResponses = [
+    "Great question! Based on your transport data, cycling or e-scooters for distances under 5 km could reduce your daily emissions by 40%.",
+    "Your electricity usage is above average. Consider setting your AC to 26°C instead of 20°C — it cuts power consumption by up to 30%.",
+    "Switching to a vegetarian diet even 3 days a week can reduce your food emissions by nearly 1.5 kg CO₂ per week.",
+    "Did you know? A 10-minute shower uses 80L of hot water, producing ~0.6 kg CO₂. A 5-minute cold shower saves both water and energy!",
+    "I recommend setting a monthly goal to reduce your shopping carbon by 10%. Buying second-hand or local products helps significantly.",
+    "Your eco score is currently 82 — excellent! To reach Level 5, focus on reducing transport emissions which are your largest category.",
+    "Composting kitchen waste reduces landfill methane production significantly. Even a small compost bin can divert 2–3 kg of waste weekly.",
+    "Using reusable bags, bottles and containers prevents ~1.4 kg CO₂ per month compared to single-use plastics.",
+  ];
+  let aiResponseIndex = 0;
+
+  function sendChat() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+
+    const chatBox = document.getElementById('chatBox');
+
+    // User message
+    chatBox.innerHTML += `<div class="chat-msg user">${msg}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // Typing indicator
+    const typingId = 'typing_' + Date.now();
+    chatBox.innerHTML += `
+      <div class="d-flex gap-2 align-items-center" id="${typingId}">
+        <div class="ai-avatar"><i class="fas fa-robot" style="font-size:0.7rem"></i></div>
+        <div class="chat-msg ai" style="padding:10px 16px">
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+      </div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    setTimeout(() => {
+      document.getElementById(typingId)?.remove();
+      const response = aiResponses[aiResponseIndex % aiResponses.length];
+      aiResponseIndex++;
+      chatBox.innerHTML += `
+        <div class="d-flex gap-2 align-items-start">
+          <div class="ai-avatar"><i class="fas fa-robot" style="font-size:0.7rem"></i></div>
+          <div class="chat-msg ai">${response}</div>
+        </div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }, 1400);
+  }
+
+  function generateNewTips() {
+    showAppToast('Generating fresh AI recommendations via Gemini...', 'info');
+    setTimeout(() => showAppToast('New eco tips generated successfully!', 'success'), 2000);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack - AI Carbon Footprint Calculator & Eco Recommendation System</title>
+  
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="EcoTrack - AI Carbon Footprint Calculator">
+  <meta name="description" content="Calculate your daily carbon footprint and receive personalized, AI-driven eco-friendly recommendations to live a sustainable life.">
+  <meta name="keywords" content="carbon footprint, carbon footprint calculator, sustainability, green energy, gemini eco recommendation, climate change">
+  <meta name="author" content="EcoTrack Team">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body data-theme="dark">
+
+  <!-- Page Loader -->
+  <div class="page-loader">
+    <div class="loader-logo">
+      <i class="fas fa-leaf text-primary-custom"></i>
+    </div>
+    <div class="loader-bar">
+      <div class="loader-progress"></div>
+    </div>
+    <div class="loader-text">Analyzing Atmosphere...</div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar-custom">
+    <div class="container-custom d-flex align-items-center justify-content-between">
+      <a href="#hero" class="navbar-brand-custom">
+        <div class="brand-icon">
+          <i class="fas fa-leaf text-white"></i>
+        </div>
+        <span class="fw-black"><span class="text-primary-custom">Eco</span>Track</span>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <div class="nav-links-custom">
+        <a href="#hero" class="nav-link-custom active">Home</a>
+        <a href="#about" class="nav-link-custom">About</a>
+        <a href="#features" class="nav-link-custom">Features</a>
+        <a href="#statistics" class="nav-link-custom">Stats</a>
+        <a href="#testimonials" class="nav-link-custom">Impact</a>
+        <a href="#contact" class="nav-link-custom">Contact</a>
+      </div>
+
+      <div class="navbar-actions">
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" aria-label="Toggle Theme">
+          <i class="fas fa-sun"></i>
+        </button>
+
+        <!-- CTAs -->
+        <a href="login.html" class="btn-glass d-none d-sm-inline-flex">Sign In</a>
+        <a href="register.html" class="btn-primary-custom">
+          <span>Get Started</span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-menu-btn" aria-label="Toggle Mobile Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Navigation Slider -->
+  <div class="mobile-nav-overlay"></div>
+  <div class="mobile-nav">
+    <a href="#hero" class="nav-link-custom active">Home</a>
+    <a href="#about" class="nav-link-custom">About</a>
+    <a href="#features" class="nav-link-custom">Features</a>
+    <a href="#statistics" class="nav-link-custom">Stats</a>
+    <a href="#testimonials" class="nav-link-custom">Impact</a>
+    <a href="#contact" class="nav-link-custom">Contact</a>
+    <div class="d-flex flex-column gap-3 mt-4">
+      <a href="login.html" class="btn-glass text-center">Sign In</a>
+      <a href="register.html" class="btn-primary-custom text-center justify-content-center">Get Started</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero-section">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="particles-container"></div>
+    <div class="container-custom">
+      <div class="row align-items-center">
+        <!-- Hero Text -->
+        <div class="col-lg-6 hero-content text-start">
+          <div class="hero-badge">
+            <span class="dot"></span>
+            <span>Gemini AI-Powered Sustainability</span>
+          </div>
+          <h1 class="hero-title">
+            Track, Reduce & <br>
+            <span class="text-gradient">Offset Your Carbon</span> <br>
+            Footprint in Real-time.
+          </h1>
+          <p class="hero-description">
+            Calculate your carbon impact across transportation, energy, water, shopping, and waste. Get tailored, AI-generated eco-recommendations to optimize your score.
+          </p>
+          <div class="hero-actions">
+            <a href="register.html" class="btn-primary-custom">
+              <span>Start Calculating Now</span>
+              <i class="fas fa-leaf"></i>
+            </a>
+            <a href="#about" class="btn-outline-custom">
+              <span>Learn More</span>
+            </a>
+          </div>
+          
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <span class="hero-stat-value">12.4M+</span>
+              <span class="hero-stat-label">Tons CO₂ Offset</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-value">48,000+</span>
+              <span class="hero-stat-label">Active Users</span>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <span class="hero-stat-value">84%</span>
+              <span class="hero-stat-label">Avg Carbon Saved</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Visual (Interactive dashboard preview) -->
+        <div class="col-lg-6 mt-5 mt-lg-0">
+          <div class="hero-visual">
+            <!-- Floating cards -->
+            <div class="float-card float-card-1">
+              <i class="fas fa-car float-card-icon"></i>
+              <span>Car pooling saved 12kg CO₂</span>
+            </div>
+            <div class="float-card float-card-2">
+              <i class="fas fa-tint float-card-icon"></i>
+              <span>Water target achieved! +50 Eco</span>
+            </div>
+            <div class="float-card float-card-3">
+              <i class="fas fa-lightbulb float-card-icon"></i>
+              <span>LED alternative: Save 4.2kWh</span>
+            </div>
+
+            <!-- Glassmorphic Dashboard -->
+            <div class="hero-dashboard">
+              <div class="dashboard-header">
+                <div class="dashboard-dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div class="dashboard-title">LIFESTYLE METRICS OVERVIEW</div>
+                <div class="eco-badge-mini">
+                  <i class="fas fa-shield-alt"></i> Level 4
+                </div>
+              </div>
+
+              <!-- Main Dashboard Score -->
+              <div class="text-center my-4">
+                <span class="text-muted-custom d-block font-display fs-7">YOUR ECO SCORE</span>
+                <span class="display-2 text-gradient-warm fw-black glow-number d-block">82</span>
+                <span class="pill pill-success my-2"><i class="fas fa-chevron-up"></i> Excellent Profile</span>
+              </div>
+
+              <!-- Metrics -->
+              <div class="dash-metrics">
+                <div class="dash-metric">
+                  <span class="dash-metric-value">4.2</span>
+                  <span class="dash-metric-label">Tons CO₂ / Yr</span>
+                </div>
+                <div class="dash-metric">
+                  <span class="dash-metric-value">-25%</span>
+                  <span class="dash-metric-label">This Month</span>
+                </div>
+                <div class="dash-metric">
+                  <span class="dash-metric-value">460</span>
+                  <span class="dash-metric-label">Eco points</span>
+                </div>
+              </div>
+
+              <!-- Chart Preview -->
+              <div class="dash-chart-preview">
+                <div class="chart-bars">
+                  <div class="chart-bar" style="height: 45%;"></div>
+                  <div class="chart-bar" style="height: 60%;"></div>
+                  <div class="chart-bar" style="height: 35%;"></div>
+                  <div class="chart-bar" style="height: 75%;"></div>
+                  <div class="chart-bar" style="height: 50%;"></div>
+                  <div class="chart-bar" style="height: 90%;"></div>
+                  <div class="chart-bar" style="height: 82%;"></div>
+                </div>
+              </div>
+
+              <!-- Score Indicator -->
+              <div class="dash-score-row">
+                <div class="dash-score-label">Global average rank</div>
+                <div class="dash-score-value">Top 12%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Project Section -->
+  <section id="about" class="about-section section-py">
+    <div class="container-custom">
+      <div class="text-center">
+        <span class="section-tag">About Project</span>
+        <h2 class="section-title">Bridging Artificial Intelligence <br>& Sustainability</h2>
+        <div class="section-divider"></div>
+        <p class="section-subtitle">
+          EcoTrack empowers individuals to measure their impact, adapt their behaviors, and actively combat climate change through actionable carbon offsets and intelligence.
+        </p>
+      </div>
+
+      <div class="row align-items-center mt-5">
+        <!-- Visual Column -->
+        <div class="col-lg-6 reveal-left">
+          <div class="about-image-wrapper">
+            <div class="about-image-placeholder">
+              <i class="fas fa-globe-americas globe-icon text-primary-custom"></i>
+              <div class="about-badge-overlay">
+                <div class="about-badge-icon">
+                  <i class="fas fa-seedling text-white"></i>
+                </div>
+                <div>
+                  <h4 class="fs-6 fw-bold mb-1 text-white">Project Objective</h4>
+                  <p class="mb-0 fs-7 text-muted-custom" style="font-size:0.78rem;">To guide users to net-zero lifestyles using personalized data modeling and Gemini AI reasoning.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info / Points Column -->
+        <div class="col-lg-6 mt-5 mt-lg-0 reveal-right">
+          <h3 class="mb-4">Why track with EcoTrack?</h3>
+          <p class="text-muted-custom">
+            Most footprint models generalize. EcoTrack uses your hyper-local everyday choices in travel, home utilities, nutrition, and shopping habits to render a precise, interactive model of your dynamic carbon levels.
+          </p>
+
+          <div class="about-points">
+            <div class="about-point">
+              <div class="about-point-icon">
+                <i class="fas fa-robot"></i>
+              </div>
+              <div>
+                <h5 class="fs-6 fw-bold mb-1">AI Recommendation Core</h5>
+                <p class="mb-0 fs-7 text-muted-custom">Google Gemini analyzes your lowest performing category and creates granular, easy-to-follow energy, transportation, and waste adaptation challenges.</p>
+              </div>
+            </div>
+
+            <div class="about-point">
+              <div class="about-point-icon">
+                <i class="fas fa-history"></i>
+              </div>
+              <div>
+                <h5 class="fs-6 fw-bold mb-1">Continuous Log History</h5>
+                <p class="mb-0 fs-7 text-muted-custom">Track variables daily, filter records to compare previous seasons, and export fully verified PDF emission statements for audits or resumes.</p>
+              </div>
+            </div>
+
+            <div class="about-point">
+              <div class="about-point-icon">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div>
+                <h5 class="fs-6 fw-bold mb-1">Global Gamified Leaderboard</h5>
+                <p class="mb-0 fs-7 text-muted-custom">Compete with friends, earn green carbon badges, and move up local town or city rankings as you reduce your weekly emissions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="features-section section-py">
+    <div class="container-custom">
+      <div class="text-center">
+        <span class="section-tag">Key Features</span>
+        <h2 class="section-title">Intelligent Calculators & Trackers</h2>
+        <div class="section-divider"></div>
+        <p class="section-subtitle">Our unified platform breaks down carbon footprint calculations into intuitive, structured lifestyle modules.</p>
+      </div>
+
+      <div class="features-grid mt-5 reveal">
+        <!-- Feature 1: Transportation -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap icon-green">
+            <i class="fas fa-bus"></i>
+          </div>
+          <h3 class="feature-title">Smart Transport Logging</h3>
+          <p class="feature-desc">Track emissions from bikes, private petrol/EV cars, local transit, heavy rail, and short/long-haul flights dynamically.</p>
+          <span class="feature-tag tag-green">Highly Interactive</span>
+        </div>
+
+        <!-- Feature 2: Home Energy -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap icon-teal">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <h3 class="feature-title">Home Utility Metering</h3>
+          <p class="feature-desc">Input your monthly electricity bill, LPG usage, AC runtime hours, and solar offset ratios for precise utility values.</p>
+          <span class="feature-tag tag-teal">Utility Integrated</span>
+        </div>
+
+        <!-- Feature 3: Water Tracker -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap icon-lime">
+            <i class="fas fa-tint"></i>
+          </div>
+          <h3 class="feature-title">Water Footprint Index</h3>
+          <p class="feature-desc">Monitor direct water usage for bathing, cleaning, washing and indirect consumption values from consumer habits.</p>
+          <span class="feature-tag tag-green">Critical Resource</span>
+        </div>
+
+        <!-- Feature 4: Food Habits -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap icon-gold">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <h3 class="feature-title">Dietary Carbon Index</h3>
+          <p class="feature-desc">Compares carbon outputs between Vegetarian, Non-Vegetarian, and Vegan diets to detail your agricultural impact.</p>
+          <span class="feature-tag tag-gold">Gemini Powered</span>
+        </div>
+
+        <!-- Feature 5: AI Eco Score -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap icon-purple">
+            <i class="fas fa-brain"></i>
+          </div>
+          <h3 class="feature-title">Generative AI Actions</h3>
+          <p class="feature-desc">Gemini engines analyze monthly behaviors and return custom saving tips, eco alternatives, and weekly carbon challenges.</p>
+          <span class="feature-tag tag-gold">Gemini API</span>
+        </div>
+
+        <!-- Feature 6: Interactive Charts -->
+        <div class="feature-card">
+          <div class="feature-icon-wrap icon-blue">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3 class="feature-title">Rich Analytics Dashboard</h3>
+          <p class="feature-desc">Observe patterns with custom Chart.js pie, line, and bar plots depicting weekly, monthly and yearly carbon levels.</p>
+          <span class="feature-tag tag-blue">Chart.js</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section id="statistics" class="stats-section section-py text-white">
+    <div class="container-custom">
+      <div class="text-center text-white">
+        <span class="section-tag" style="background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15); color:#fff;">Live Platform Metrics</span>
+        <h2 class="section-title text-white">Making A Measurable Impact</h2>
+        <div class="section-divider" style="background:var(--white);"></div>
+        <p class="section-subtitle text-white-50">Our community carbon offset progress is updated instantly. Take a look at our global success numbers.</p>
+      </div>
+
+      <div class="stats-grid mt-5 reveal-scale">
+        <div class="stat-item">
+          <i class="fas fa-tree stat-icon"></i>
+          <span class="stat-number" data-target="324050">0</span>
+          <span class="stat-label">Trees Saved</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-smog stat-icon"></i>
+          <span class="stat-number" data-target="9845" data-suffix=" Tons">0</span>
+          <span class="stat-label">Tons CO₂ Avoided</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-users stat-icon"></i>
+          <span class="stat-number" data-target="48530">0</span>
+          <span class="stat-label">Active Eco-Warriors</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-award stat-icon"></i>
+          <span class="stat-number" data-target="86">0</span>
+          <span class="stat-label">Average Eco Score</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-section section-py">
+    <div class="container-custom">
+      <div class="text-center">
+        <span class="section-tag">Workflow</span>
+        <h2 class="section-title">How EcoTrack Operates</h2>
+        <div class="section-divider"></div>
+        <p class="section-subtitle">Achieving net-zero emissions is as simple as these four connected actions.</p>
+      </div>
+
+      <div class="steps-container mt-5">
+        <div class="steps-line"></div>
+        <div class="steps-grid stagger reveal">
+          <!-- Step 1 -->
+          <div class="step-item">
+            <div class="step-number">01</div>
+            <h3 class="step-title">Enter Details</h3>
+            <p class="step-desc">Input everyday statistics including commuting distances, home energy bills, waste, and food diet metrics.</p>
+          </div>
+          <!-- Step 2 -->
+          <div class="step-item">
+            <div class="step-number">02</div>
+            <h3 class="step-title">Analyze Dashboard</h3>
+            <p class="step-desc">Observe categorized charts detailing your highest carbon-producing habits over days, weeks, and seasons.</p>
+          </div>
+          <!-- Step 3 -->
+          <div class="step-item">
+            <div class="step-number">03</div>
+            <h3 class="step-title">Apply AI Tips</h3>
+            <p class="step-desc">Deploy Gemini recommended habits, complete interactive challenges, and buy sustainable eco alternatives.</p>
+          </div>
+          <!-- Step 4 -->
+          <div class="step-item">
+            <div class="step-number">04</div>
+            <h3 class="step-title">Improve Rankings</h3>
+            <p class="step-desc">Watch your Eco Score rise on global public leaderboards and earn exclusive certifications and badges.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="testimonials-section section-py">
+    <div class="container-custom">
+      <div class="text-center">
+        <span class="section-tag">Testimonials</span>
+        <h2 class="section-title">What Our Eco-Warriors Say</h2>
+        <div class="section-divider"></div>
+        <p class="section-subtitle">Real feedback from developers, students, and citizens actively using EcoTrack.</p>
+      </div>
+
+      <div class="testimonials-track mt-5 reveal">
+        <!-- Testimonial 1 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="testimonial-text">
+            "EcoTrack changed how I commute. The Gemini AI recommended taking local rapid buses over my car. My weekly score went up by 15 points, and I saved $40 on petrol!"
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar avatar-1">A</div>
+            <div>
+              <h4 class="author-name">Aarav Sharma</h4>
+              <p class="author-role">Engineering Student</p>
+            </div>
+            <span class="author-badge"><i class="fas fa-check-circle"></i> Leader</span>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="testimonial-text">
+            "As an environmental researcher, I was amazed by the precision of the utility calculations. Integrating solar panels and tracking grid offset is incredibly accurate."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar avatar-2">E</div>
+            <div>
+              <h4 class="author-name">Emily Watson</h4>
+              <p class="author-role">Climate Researcher</p>
+            </div>
+            <span class="author-badge"><i class="fas fa-check-circle"></i> Pro</span>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          </div>
+          <p class="testimonial-text">
+            "The gamified leaderboard keeps our university hostel competing. We compare our water usage scores daily, which helped reduce total consumption by 30%!"
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar avatar-3">R</div>
+            <div>
+              <h4 class="author-name">Rohan Verma</h4>
+              <p class="author-role">Hostel Sustainability Lead</p>
+            </div>
+            <span class="author-badge"><i class="fas fa-check-circle"></i> Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner Section -->
+  <section class="section-py pt-0">
+    <div class="container-custom">
+      <div class="cta-banner reveal-scale">
+        <div class="cta-banner-content">
+          <h2 class="cta-banner-title">Ready to Lead the Green Revolution?</h2>
+          <p class="cta-banner-desc">Create your free dashboard account today and begin tracking, optimizing, and saving our environment.</p>
+          <a href="register.html" class="btn-white">
+            <span>Register Free Account</span>
+            <i class="fas fa-user-plus"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact & FAQ Section -->
+  <section id="contact" class="contact-section section-py">
+    <div class="container-custom">
+      <div class="text-center">
+        <span class="section-tag">Support & Inquiry</span>
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="section-divider"></div>
+        <p class="section-subtitle">Have questions about carbon metrics, API keys, or custom partnerships? Send us a message.</p>
+      </div>
+
+      <div class="row mt-5">
+        <!-- Contact Form Column -->
+        <div class="col-lg-6 reveal-left">
+          <div class="contact-card">
+            <h3 class="mb-4">Send Us A Message</h3>
+            <form id="landingContactForm">
+              <div class="form-group">
+                <label for="contactName" class="form-label-custom">Full Name</label>
+                <input type="text" id="contactName" class="form-control-custom" placeholder="e.g. John Doe" required>
+              </div>
+              <div class="form-group">
+                <label for="contactEmail" class="form-label-custom">Email Address</label>
+                <input type="email" id="contactEmail" class="form-control-custom" placeholder="e.g. john@example.com" required>
+              </div>
+              <div class="form-group">
+                <label for="contactSubject" class="form-label-custom">Subject</label>
+                <input type="text" id="contactSubject" class="form-control-custom" placeholder="Feedback / Inquiry" required>
+              </div>
+              <div class="form-group">
+                <label for="contactMessage" class="form-label-custom">Your Message</label>
+                <textarea id="contactMessage" class="form-control-custom" rows="5" placeholder="Write your message here..." required></textarea>
+              </div>
+              <button type="submit" class="btn-primary-custom w-100 justify-content-center">
+                <span>Submit Message</span>
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- FAQ & Google Maps Column -->
+        <div class="col-lg-6 mt-5 mt-lg-0 reveal-right">
+          <h3 class="mb-4">Frequently Asked Questions</h3>
+          
+          <div class="faq-container mb-4">
+            <!-- FAQ 1 -->
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>How does Gemini calculate my recommendations?</span>
+                <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+              </</button>
+              <div class="faq-answer">
+                <p class="mb-0">Gemini parses your lowest-performing carbon metric categories, compares them against a repository of sustainable lifestyle adjustments, and outlines high, medium, and low impact challenges tailored to your schedule.</p>
+              </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Is my utility and data usage private?</span>
+                <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+              </button>
+              <div class="faq-answer">
+                <p class="mb-0">Absolutely. All logs are stored securely in our MySQL relational database and used solely for rendering your dashboard stats and generating AI-based reduction checklists. We never sell or share consumer metrics.</p>
+              </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>How is the Eco Score computed?</span>
+                <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+              </button>
+              <div class="faq-answer">
+                <p class="mb-0">The score is calculated out of 100 based on your total daily emissions relative to global average thresholds. Lower transport fuel, diet options, and energy output boost your score toward green ranking tiers.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Google Maps Placeholder Section -->
+          <h3 class="mb-3 fs-5">Our Headquarters</h3>
+          <div class="rounded-large overflow-hidden border border-color" style="height: 200px; position: relative;">
+            <iframe src="https://www.google.com/maps/embed?pb=!11m18!1m12!1m3!1d3022.1837920140026!2d-73.98773122421528!3d40.75889497138096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c2585fbb48c3b1%3A0xa102cf0ce18a156e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container-custom">
+      <div class="footer-grid">
+        <!-- Logo and About -->
+        <div>
+          <a href="#hero" class="navbar-brand-custom">
+            <div class="brand-icon">
+              <i class="fas fa-leaf text-white"></i>
+            </div>
+            <span class="fw-black text-white"><span class="text-primary-custom">Eco</span>Track</span>
+          </a>
+          <p class="footer-brand-desc">
+            A state-of-the-art climate tracking application helping citizens monitor carbon outputs, reduce utility consumption, and log milestones.
+          </p>
+          <div class="footer-social">
+            <a href="#" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-btn" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-btn" aria-label="Github"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+
+        <!-- Direct Links -->
+        <div>
+          <h4 class="footer-heading">Quick Links</h4>
+          <div class="footer-links">
+            <a href="#hero" class="footer-link">Home</a>
+            <a href="#about" class="footer-link">About Project</a>
+            <a href="#features" class="footer-link">Trackers</a>
+            <a href="#statistics" class="footer-link">Community Stats</a>
+            <a href="#contact" class="footer-link">Get Help</a>
+          </div>
+        </div>
+
+        <!-- Features Quick -->
+        <div>
+          <h4 class="footer-heading">Calculators</h4>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Transit Calculator</a>
+            <a href="#" class="footer-link">Home Energy logs</a>
+            <a href="#" class="footer-link">Water Consumption</a>
+            <a href="#" class="footer-link">Diet Carbon Scale</a>
+            <a href="#" class="footer-link">AI Custom Planner</a>
+          </div>
+        </div>
+
+        <!-- Newsletter Subscription -->
+        <div>
+          <h4 class="footer-heading">Newsletter</h4>
+          <p class="footer-brand-desc" style="margin-top:0;">Subscribe to our newsletter to receive weekly carbon tips.</p>
+          <form class="footer-newsletter" onsubmit="event.preventDefault(); window.showToast('Subscribed to newsletter!', 'success'); this.reset();">
+            <input type="email" class="newsletter-input" placeholder="Your email address" required>
+            <button type="submit" class="newsletter-btn">Subscribe</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Footer Bottom -->
+      <div class="footer-bottom">
+        <p class="footer-bottom-text">
+          &copy; 2026 EcoTrack. Developed for Final Year CSE Project.
+        </p>
+        <div class="footer-bottom-links">
+          <a href="#" class="footer-bottom-link">Privacy Policy</a>
+          <a href="#" class="footer-bottom-link">Terms of Service</a>
+          <a href="#" class="footer-bottom-link">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-top-btn" aria-label="Scroll to Top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- Bootstrap 5 Bundle with Popper JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+  <!-- Custom JavaScript -->
+  <script src="js/main.js"></script>
+</body>
+</html>

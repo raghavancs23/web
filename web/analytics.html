@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack - Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body data-theme="dark">
+<div class="app-layout">
+  <div id="sidebarContainer"></div>
+  <div class="main-content" id="mainContent">
+    <div id="topbarContainer"></div>
+    <div class="page-content">
+
+      <div class="page-header d-flex justify-content-between align-items-start flex-wrap gap-3">
+        <div>
+          <h1 class="page-header-title">📊 Analytics Dashboard</h1>
+          <p class="page-header-subtitle">Visualize your carbon trends across different time periods.</p>
+        </div>
+        <!-- Period Filter -->
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="btn-glass period-btn active" onclick="setPeriod('week',this)" style="padding:8px 18px;font-size:0.82rem">Week</button>
+          <button class="btn-glass period-btn" onclick="setPeriod('month',this)" style="padding:8px 18px;font-size:0.82rem">Month</button>
+          <button class="btn-glass period-btn" onclick="setPeriod('year',this)" style="padding:8px 18px;font-size:0.82rem">Year</button>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-card-icon icon-green"><i class="fas fa-leaf"></i></div><div class="stat-card-value text-gradient">35.7</div><div class="stat-card-label">kg CO₂ This Week</div><div class="stat-card-change change-down"><i class="fas fa-arrow-down"></i> -12% vs last week</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-card-icon icon-teal"><i class="fas fa-calendar"></i></div><div class="stat-card-value" style="color:var(--secondary)">142</div><div class="stat-card-label">kg CO₂ This Month</div><div class="stat-card-change change-down"><i class="fas fa-arrow-down"></i> -8% vs last month</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-card-icon icon-blue"><i class="fas fa-chart-line"></i></div><div class="stat-card-value" style="color:#1976d2">4.2</div><div class="stat-card-label">Avg tons / Year</div><div class="stat-card-change change-up"><i class="fas fa-arrow-up"></i> Improving</div></div></div>
+        <div class="col-6 col-md-3"><div class="stat-card"><div class="stat-card-icon icon-gold"><i class="fas fa-trophy"></i></div><div class="stat-card-value" style="color:var(--accent-warm)">460</div><div class="stat-card-label">Eco Points Earned</div><div class="stat-card-change change-up"><i class="fas fa-arrow-up"></i> +80 this week</div></div></div>
+      </div>
+
+      <!-- Main Charts -->
+      <div class="row g-4 mb-4">
+        <!-- Line Chart: Monthly Trend -->
+        <div class="col-xl-8">
+          <div class="chart-container">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">CO₂ Emission Trend</div>
+                <div style="font-size:0.78rem;color:var(--text-secondary)">Daily kg over selected period</div>
+              </div>
+              <div class="d-flex align-items-center gap-3" style="font-size:0.78rem">
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--primary);display:inline-block"></span> This Period</span>
+                <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(148,163,184,0.4);display:inline-block"></span> Last Period</span>
+              </div>
+            </div>
+            <canvas id="trendChart" height="130"></canvas>
+          </div>
+        </div>
+
+        <!-- Pie Chart: Category Breakdown -->
+        <div class="col-xl-4">
+          <div class="chart-container">
+            <div class="chart-header"><div class="chart-title">Category Breakdown</div></div>
+            <canvas id="pieChart" height="220"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Charts Row -->
+      <div class="row g-4">
+        <!-- Bar Chart: Monthly Comparison -->
+        <div class="col-lg-6">
+          <div class="chart-container">
+            <div class="chart-header"><div><div class="chart-title">Monthly Comparison</div><div style="font-size:0.78rem;color:var(--text-secondary)">kg CO₂ per month this year</div></div></div>
+            <canvas id="monthlyBar" height="180"></canvas>
+          </div>
+        </div>
+
+        <!-- Bar Chart: Category weekly comparison -->
+        <div class="col-lg-6">
+          <div class="chart-container">
+            <div class="chart-header"><div><div class="chart-title">Year-over-Year Comparison</div><div style="font-size:0.78rem;color:var(--text-secondary)">Total tons CO₂ per year</div></div></div>
+            <canvas id="yearlyCompare" height="180"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="js/app.js"></script>
+<script>
+  renderSidebar('analytics.html');
+  renderTopbar('Analytics', 'Analytics');
+
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.borderColor = 'rgba(0,200,83,0.07)';
+
+  const tooltipOpts = { backgroundColor:'#0d1f3c', titleColor:'#e2e8f0', bodyColor:'#94a3b8', borderColor:'rgba(0,200,83,0.2)', borderWidth:1 };
+
+  // --- Trend Line Chart ---
+  const trendCtx = document.getElementById('trendChart').getContext('2d');
+  const trendChart = new Chart(trendCtx, {
+    type: 'line',
+    data: {
+      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets: [
+        { label:'This Period', data:[5.2,3.8,6.1,4.4,3.2,7.8,5.1], borderColor:'#00c853', backgroundColor:'rgba(0,200,83,0.08)', fill:true, tension:0.4, pointBackgroundColor:'#00c853', pointRadius:4 },
+        { label:'Last Period',  data:[6.1,4.5,7.2,5.1,4.0,8.2,5.8], borderColor:'rgba(148,163,184,0.4)', backgroundColor:'transparent', fill:false, tension:0.4, borderDash:[5,5], pointRadius:3 }
+      ]
+    },
+    options: { responsive:true, plugins:{ legend:{display:false}, tooltip:tooltipOpts }, scales:{ y:{ beginAtZero:true, grid:{ color:'rgba(0,200,83,0.05)' } }, x:{ grid:{display:false} } } }
+  });
+
+  // --- Category Pie ---
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+  new Chart(pieCtx, {
+    type: 'doughnut',
+    data: { labels:['Transport','Electricity','Food','Water','Waste','Shopping'], datasets:[{ data:[35,25,18,9,7,6], backgroundColor:['#00c853','#00897b','#76ff03','#ffd600','#1565c0','#6a1b9a'], borderColor:'transparent', hoverOffset:6 }] },
+    options: { responsive:true, cutout:'65%', plugins:{ legend:{position:'bottom',labels:{padding:10,boxWidth:10,font:{size:11}}}, tooltip:tooltipOpts } }
+  });
+
+  // --- Monthly Bar ---
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthCtx = document.getElementById('monthlyBar').getContext('2d');
+  new Chart(monthCtx, {
+    type: 'bar',
+    data: { labels: months, datasets:[{ label:'kg CO₂', data:[180,162,175,155,168,145,142,158,163,140,136,130], backgroundColor:'rgba(0,200,83,0.2)', borderColor:'#00c853', borderWidth:2, borderRadius:6 }] },
+    options: { responsive:true, plugins:{ legend:{display:false}, tooltip:tooltipOpts }, scales:{ y:{ beginAtZero:true, grid:{color:'rgba(0,200,83,0.05)'} }, x:{ grid:{display:false} } } }
+  });
+
+  // --- Yearly Comparison ---
+  const yearCtx = document.getElementById('yearlyCompare').getContext('2d');
+  new Chart(yearCtx, {
+    type: 'bar',
+    data: {
+      labels: ['2022','2023','2024','2025','2026'],
+      datasets: [
+        { label:'Your Emissions', data:[7.8,6.5,5.9,5.1,4.2], backgroundColor:'rgba(0,200,83,0.3)', borderColor:'#00c853', borderWidth:2, borderRadius:6 },
+        { label:'Global Avg', data:[8.5,8.3,8.0,7.8,7.5], backgroundColor:'rgba(148,163,184,0.1)', borderColor:'rgba(148,163,184,0.5)', borderWidth:2, borderRadius:6 }
+      ]
+    },
+    options: { responsive:true, plugins:{ legend:{position:'bottom',labels:{padding:12,boxWidth:10,font:{size:11}}}, tooltip:tooltipOpts }, scales:{ y:{ beginAtZero:true, grid:{color:'rgba(0,200,83,0.05)'} }, x:{ grid:{display:false} } } }
+  });
+
+  function setPeriod(period, btn) {
+    document.querySelectorAll('.period-btn').forEach(b => { b.style.background=''; b.style.borderColor=''; b.style.color=''; });
+    btn.style.background = 'rgba(0,200,83,0.15)';
+    btn.style.borderColor = 'var(--primary)';
+    btn.style.color = 'var(--primary)';
+
+    const data = {
+      week:  { labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], curr:[5.2,3.8,6.1,4.4,3.2,7.8,5.1], prev:[6.1,4.5,7.2,5.1,4.0,8.2,5.8] },
+      month: { labels:Array.from({length:30},(_,i)=>`${i+1}`), curr:Array.from({length:30},()=>+(Math.random()*5+2).toFixed(1)), prev:Array.from({length:30},()=>+(Math.random()*5+3).toFixed(1)) },
+      year:  { labels:months, curr:[180,162,175,155,168,145,142,158,163,140,136,130], prev:[200,185,190,175,185,165,160,175,180,160,155,148] }
+    };
+    trendChart.data.labels = data[period].labels;
+    trendChart.data.datasets[0].data = data[period].curr;
+    trendChart.data.datasets[1].data = data[period].prev;
+    trendChart.update();
+  }
+</script>
+</body>
+</html>

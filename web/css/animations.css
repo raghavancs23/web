@@ -1,0 +1,310 @@
+/* ================================================================
+   EcoTrack - Animations & Effects Stylesheet
+   Supplementary CSS for micro-interactions
+================================================================ */
+
+/* Typing cursor effect */
+.typed-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  background: var(--primary);
+  margin-left: 3px;
+  vertical-align: middle;
+  animation: cursor-blink 0.8s step-end infinite;
+}
+
+@keyframes cursor-blink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Glow effect for numbers */
+.glow-number {
+  text-shadow: 0 0 30px rgba(0, 200, 83, 0.5);
+}
+
+/* Hover ripple effect */
+.ripple-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
+  opacity: 0;
+}
+
+.ripple-btn:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+}
+
+/* Gradient border animated */
+.gradient-border {
+  position: relative;
+  border-radius: var(--radius-lg);
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, var(--primary), var(--accent), var(--secondary));
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: var(--transition-base);
+}
+
+.gradient-border:hover::before {
+  opacity: 1;
+}
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0.03) 25%, 
+    rgba(255,255,255,0.08) 50%, 
+    rgba(255,255,255,0.03) 75%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* Orbit animation for hero decorations */
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+
+.orbit-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--primary);
+  position: absolute;
+  animation: orbit 4s linear infinite;
+}
+
+/* Progress ring */
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-fill {
+  stroke-dasharray: 301;
+  stroke-dashoffset: 301;
+  stroke: var(--primary);
+  stroke-width: 6;
+  stroke-linecap: round;
+  fill: none;
+  transition: stroke-dashoffset 1.5s ease;
+}
+
+/* Eco meter animation */
+@keyframes fill-meter {
+  from { stroke-dashoffset: 301; }
+}
+
+/* Wave animation for background */
+.wave-bg {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.wave-bg svg {
+  width: 100%;
+  height: 80px;
+}
+
+.wave-path {
+  fill: var(--bg-primary);
+}
+
+/* Tilt card effect via JS class */
+.tilt-card {
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+}
+
+/* Tag pill */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pill-success {
+  background: rgba(0, 200, 83, 0.12);
+  color: var(--primary);
+  border: 1px solid rgba(0, 200, 83, 0.25);
+}
+
+.pill-warning {
+  background: rgba(255, 214, 0, 0.1);
+  color: #f9a825;
+  border: 1px solid rgba(255, 214, 0, 0.25);
+}
+
+.pill-danger {
+  background: rgba(244, 67, 54, 0.1);
+  color: #e53935;
+  border: 1px solid rgba(244, 67, 54, 0.2);
+}
+
+/* Hover lift variants */
+.hover-lift-sm:hover { transform: translateY(-4px); transition: var(--transition-base); }
+.hover-lift-md:hover { transform: translateY(-8px); transition: var(--transition-base); }
+.hover-lift-lg:hover { transform: translateY(-12px); transition: var(--transition-base); }
+
+/* Leafy background decoration */
+.leaf-decoration {
+  position: absolute;
+  opacity: 0.04;
+  font-size: 12rem;
+  color: var(--primary);
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+}
+
+/* Number counter styling */
+.counter-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Divider with icon */
+.icon-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 40px 0;
+}
+
+.icon-divider::before,
+.icon-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-color));
+}
+
+.icon-divider::after {
+  background: linear-gradient(90deg, var(--border-color), transparent);
+}
+
+.icon-divider-icon {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+/* Eco tip box */
+.eco-tip-box {
+  background: rgba(0, 200, 83, 0.06);
+  border: 1px solid rgba(0, 200, 83, 0.2);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.eco-tip-icon {
+  color: var(--primary);
+  font-size: 1.1rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.eco-tip-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Read More arrow */
+.read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: var(--transition-fast);
+}
+
+.read-more:hover {
+  gap: 10px;
+}
+
+/* CTA inline link */
+.inline-link {
+  color: var(--primary);
+  border-bottom: 1px solid rgba(0, 200, 83, 0.3);
+  transition: var(--transition-fast);
+}
+
+.inline-link:hover {
+  border-bottom-color: var(--primary);
+}
+
+/* Mobile-specific touch areas */
+@media (max-width: 768px) {
+  .touch-target {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* Accessibility focus styles */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* High contrast adjustments */
+@media (prefers-contrast: high) {
+  .glass-card {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

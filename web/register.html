@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack - Register Account</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <!-- Custom CSS (Linked to same landing page stylesheet) -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+
+  <style>
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 40px 0;
+    }
+    .auth-card {
+      max-width: 480px;
+      width: 100%;
+      position: relative;
+      z-index: 10;
+    }
+    /* Password Strength Indicator */
+    .strength-bar {
+      height: 4px;
+      border-radius: var(--radius-full);
+      background: var(--border-color);
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    .strength-fill {
+      height: 100%;
+      width: 0;
+      transition: var(--transition-base);
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Particle and Grid background -->
+  <div class="auth-container">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+
+    <div class="container-custom">
+      <div class="d-flex justify-content-center">
+        <div class="auth-card">
+          
+          <!-- Back Link -->
+          <div class="mb-4">
+            <a href="/" class="read-more"><i class="fas fa-arrow-left"></i> Back to Home</a>
+          </div>
+
+          <!-- Glassmorphic Card -->
+          <div class="glass-card">
+            <div class="text-center mb-4">
+              <div class="brand-icon mx-auto mb-3">
+                <i class="fas fa-leaf text-white"></i>
+              </div>
+              <h2 class="fw-black mb-1">Create Account</h2>
+              <p class="text-muted-custom">Join the movement to live sustainably.</p>
+            </div>
+
+            <form id="registerForm">
+              <!-- Username -->
+              <div class="form-group">
+                <label for="username" class="form-label-custom">Username</label>
+                <div class="position-relative">
+                  <input type="text" id="username" class="form-control-custom" placeholder="e.g. green_warrior" required minlength="3">
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="form-group">
+                <label for="email" class="form-label-custom">Email Address</label>
+                <input type="email" id="email" class="form-control-custom" placeholder="name@domain.com" required>
+              </div>
+
+              <!-- Password -->
+              <div class="form-group">
+                <label for="password" class="form-label-custom">Password</label>
+                <input type="password" id="password" class="form-control-custom" placeholder="At least 8 characters" required minlength="8">
+                
+                <!-- Password Strength Meter -->
+                <div class="strength-bar">
+                  <div id="strengthFill" class="strength-fill"></div>
+                </div>
+                <div id="strengthText" class="fs-8 mt-1 text-muted-custom" style="font-size: 0.75rem;">Password strength</div>
+              </div>
+
+              <!-- Confirm Password -->
+              <div class="form-group">
+                <label for="confirmPassword" class="form-label-custom">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="form-control-custom" placeholder="Repeat your password" required>
+              </div>
+
+              <!-- Submit -->
+              <button type="submit" class="btn-primary-custom w-100 justify-content-center mt-3">
+                <span>Register Account</span>
+                <i class="fas fa-user-plus"></i>
+              </button>
+            </form>
+
+            <div class="text-center mt-4">
+              <p class="text-muted-custom mb-0">Already have an account? <a href="login.html" class="inline-link text-primary-custom">Sign In</a></p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div class="toast-container"></div>
+
+  <!-- Custom JavaScript for Registration Form & Password strength -->
+  <script>
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const strengthFill = document.getElementById('strengthFill');
+    const strengthText = document.getElementById('strengthText');
+    const registerForm = document.getElementById('registerForm');
+
+    // Password strength evaluator logic
+    passwordInput.addEventListener('input', () => {
+      const val = passwordInput.value;
+      let score = 0;
+
+      if (val.length >= 8) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+
+      // Update UI bar based on score
+      if (val.length === 0) {
+        strengthFill.style.width = '0%';
+        strengthText.innerText = 'Password strength';
+        strengthText.style.color = 'var(--gray-500)';
+      } else if (score <= 1) {
+        strengthFill.style.width = '25%';
+        strengthFill.style.backgroundColor = '#e53935'; // Red
+        strengthText.innerText = 'Weak password';
+        strengthText.style.color = '#e53935';
+      } else if (score === 2) {
+        strengthFill.style.width = '50%';
+        strengthFill.style.backgroundColor = '#fb8c00'; // Orange
+        strengthText.innerText = 'Medium strength';
+        strengthText.style.color = '#fb8c00';
+      } else if (score === 3) {
+        strengthFill.style.width = '75%';
+        strengthFill.style.backgroundColor = '#fdd835'; // Yellow
+        strengthText.innerText = 'Good strength';
+        strengthText.style.color = '#fdd835';
+      } else {
+        strengthFill.style.width = '100%';
+        strengthFill.style.backgroundColor = 'var(--primary)'; // Eco Green
+        strengthText.innerText = 'Strong password!';
+        strengthText.style.color = 'var(--primary)';
+      }
+    });
+
+    // Form Submission API hook
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (password !== confirmPassword) {
+        showLocalToast('Passwords do not match.', 'error');
+        return;
+      }
+
+      // Visual feedback loading state
+      const submitBtn = registerForm.querySelector('button[type="submit"]');
+      const origText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>Creating account...</span> <i class="fas fa-spinner fa-spin"></i>`;
+
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, email, password })
+        });
+
+        const result = await response.json();
+        if (response.ok && result.success) {
+          showLocalToast('Registration successful! Redirecting to email verification...', 'success');
+          setTimeout(() => {
+            window.location.href = 'verify-email.html';
+          }, 1500);
+        } else {
+          showLocalToast(result.message || 'Registration failed.', 'error');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origText;
+        }
+      } catch (err) {
+        showLocalToast('Server is currently offline. Simulating mock verification code in console.', 'error');
+        console.warn("Verify email code simulator activated: check verification codes directly.");
+        
+        // Simulating verification flow for classroom offline testing
+        localStorage.setItem('pending_verify_email', email);
+        setTimeout(() => {
+          window.location.href = 'verify-email.html';
+        }, 2000);
+      }
+    });
+
+    // Toast helper
+    function showLocalToast(message, type = 'success') {
+      const container = document.querySelector('.toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast-item toast-${type}`;
+      let icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+      toast.innerHTML = `
+        <i class="fas ${icon}" style="color: var(--primary);"></i>
+        <div class="toast-content">${message}</div>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = 'toast-out 0.4s ease forwards';
+        toast.addEventListener('animationend', () => toast.remove());
+      }, 4000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack - Carbon Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/app.css">
+  <style>
+    /* Step progress indicator */
+    .step-progress { display:flex; align-items:center; gap:0; margin-bottom:32px; }
+    .step-dot { width:36px; height:36px; border-radius:50%; border:2px solid var(--border-color); background:var(--bg-surface); display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; font-family:var(--font-display); color:var(--text-secondary); transition:var(--transition-base); flex-shrink:0; }
+    .step-dot.active { background:var(--primary); border-color:var(--primary); color:white; box-shadow:0 0 0 4px rgba(0,200,83,0.2); }
+    .step-dot.done { background:rgba(0,200,83,0.2); border-color:var(--primary); color:var(--primary); }
+    .step-line { flex:1; height:2px; background:var(--border-color); transition:var(--transition-base); }
+    .step-line.done { background:var(--primary); }
+    .step-label { font-size:0.7rem; color:var(--text-secondary); text-align:center; margin-top:6px; white-space:nowrap; }
+    .step-wrapper { display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
+
+    /* Calculator section panels */
+    .calc-panel { display:none; }
+    .calc-panel.active { display:block; animation: fadeSlideIn 0.4s ease; }
+    @keyframes fadeSlideIn { from {opacity:0; transform:translateX(20px);} to {opacity:1; transform:translateX(0);} }
+
+    /* Result Card */
+    .result-card { background: linear-gradient(135deg, var(--primary-dark), var(--secondary-dark)); border-radius:var(--radius-xl); padding:40px; text-align:center; position:relative; overflow:hidden; }
+    .result-card::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 30% 50%, rgba(118,255,3,0.12), transparent 60%); }
+    .result-value { font-size:4rem; font-weight:900; font-family:var(--font-display); color:white; line-height:1; }
+    .result-unit { font-size:1rem; color:rgba(255,255,255,0.7); margin-top:4px; }
+
+    /* Diet selector */
+    .diet-option { border:2px solid var(--border-color); border-radius:var(--radius-md); padding:16px; text-align:center; cursor:pointer; transition:var(--transition-base); }
+    .diet-option:hover { border-color:rgba(0,200,83,0.4); background:rgba(0,200,83,0.05); }
+    .diet-option.selected { border-color:var(--primary); background:rgba(0,200,83,0.1); }
+    .diet-option input[type=radio] { display:none; }
+    .diet-icon { font-size:2rem; margin-bottom:8px; }
+  </style>
+</head>
+<body data-theme="dark">
+<div class="app-layout">
+  <div id="sidebarContainer"></div>
+  <div class="main-content" id="mainContent">
+    <div id="topbarContainer"></div>
+    <div class="page-content">
+
+      <div class="page-header">
+        <h1 class="page-header-title">🌿 Carbon Footprint Calculator</h1>
+        <p class="page-header-subtitle">Fill in each lifestyle section to compute your total daily CO₂ emissions.</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Left: Calculator Form -->
+        <div class="col-xl-8">
+          <div class="section-card">
+
+            <!-- Step Progress Bar -->
+            <div class="step-progress" id="stepProgress">
+              <div class="step-wrapper">
+                <div class="step-dot active" id="dot0">1</div>
+                <div class="step-label">Transport</div>
+              </div>
+              <div class="step-line" id="line0"></div>
+              <div class="step-wrapper">
+                <div class="step-dot" id="dot1">2</div>
+                <div class="step-label">Energy</div>
+              </div>
+              <div class="step-line" id="line1"></div>
+              <div class="step-wrapper">
+                <div class="step-dot" id="dot2">3</div>
+                <div class="step-label">Water</div>
+              </div>
+              <div class="step-line" id="line2"></div>
+              <div class="step-wrapper">
+                <div class="step-dot" id="dot3">4</div>
+                <div class="step-label">Food</div>
+              </div>
+              <div class="step-line" id="line3"></div>
+              <div class="step-wrapper">
+                <div class="step-dot" id="dot4">5</div>
+                <div class="step-label">Waste</div>
+              </div>
+              <div class="step-line" id="line4"></div>
+              <div class="step-wrapper">
+                <div class="step-dot" id="dot5">6</div>
+                <div class="step-label">Shopping</div>
+              </div>
+            </div>
+
+            <!-- Panel 1: Transportation -->
+            <div class="calc-panel active" id="panel0">
+              <div class="section-card-header">
+                <div class="section-card-icon icon-teal"><i class="fas fa-bus"></i></div>
+                <div class="section-card-title">Daily Transportation</div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label"><i class="fas fa-bicycle me-1" style="color:var(--primary)"></i> Bike (km/day)</label>
+                  <input type="number" class="app-form-control" id="bike_km" placeholder="0" min="0" value="0">
+                </div></div>
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label"><i class="fas fa-car me-1" style="color:var(--accent-warm)"></i> Car (km/day)</label>
+                  <input type="number" class="app-form-control" id="car_km" placeholder="0" min="0" value="0">
+                </div></div>
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label"><i class="fas fa-bus me-1" style="color:#1976d2"></i> Bus (km/day)</label>
+                  <input type="number" class="app-form-control" id="bus_km" placeholder="0" min="0" value="0">
+                </div></div>
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label"><i class="fas fa-train me-1" style="color:#6a1b9a"></i> Train (km/day)</label>
+                  <input type="number" class="app-form-control" id="train_km" placeholder="0" min="0" value="0">
+                </div></div>
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label"><i class="fas fa-plane me-1" style="color:#e53935"></i> Flight Hours (monthly)</label>
+                  <input type="number" class="app-form-control" id="flight_hours" placeholder="0" min="0" value="0">
+                </div></div>
+              </div>
+            </div>
+
+            <!-- Panel 2: Energy -->
+            <div class="calc-panel" id="panel1">
+              <div class="section-card-header">
+                <div class="section-card-icon icon-blue"><i class="fas fa-bolt"></i></div>
+                <div class="section-card-title">Home Energy Usage</div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label"><i class="fas fa-plug me-1" style="color:var(--primary)"></i> Electricity (kWh/month)</label>
+                  <input type="number" class="app-form-control" id="electricity_kwh" placeholder="0" min="0" value="0">
+                </div></div>
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label"><i class="fas fa-fire me-1" style="color:var(--accent-warm)"></i> LPG Gas (kg/month)</label>
+                  <input type="number" class="app-form-control" id="lpg_kg" placeholder="0" min="0" value="0">
+                </div></div>
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label"><i class="fas fa-snowflake me-1" style="color:#1976d2"></i> AC Usage (hours/day)</label>
+                  <input type="number" class="app-form-control" id="ac_hours" placeholder="0" min="0" value="0">
+                </div></div>
+              </div>
+            </div>
+
+            <!-- Panel 3: Water -->
+            <div class="calc-panel" id="panel2">
+              <div class="section-card-header">
+                <div class="section-card-icon" style="background:rgba(33,150,243,0.12);color:#1976d2"><i class="fas fa-tint"></i></div>
+                <div class="section-card-title">Daily Water Consumption</div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label">Water Usage (Liters/day)</label>
+                  <input type="number" class="app-form-control" id="water_liters" placeholder="0" min="0" value="0">
+                </div></div>
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label">Shower Duration (min/day)</label>
+                  <input type="number" class="app-form-control" id="shower_min" placeholder="0" min="0" value="0">
+                </div></div>
+              </div>
+              <div class="eco-tip-box mt-3">
+                <i class="fas fa-lightbulb eco-tip-icon"></i>
+                <div class="eco-tip-text">Global average water use is ~142L/person/day. A 5-minute shower uses ~45 liters. Aim for below 120L daily.</div>
+              </div>
+            </div>
+
+            <!-- Panel 4: Food -->
+            <div class="calc-panel" id="panel3">
+              <div class="section-card-header">
+                <div class="section-card-icon icon-gold"><i class="fas fa-utensils"></i></div>
+                <div class="section-card-title">Food & Diet Habits</div>
+              </div>
+              <p class="text-muted-custom mb-3" style="font-size:0.875rem">Select your primary dietary preference to calculate food-chain carbon cost.</p>
+              <div class="row g-3">
+                <div class="col-4">
+                  <label class="diet-option selected" id="diet-veg" onclick="selectDiet('Vegetarian')">
+                    <input type="radio" name="diet" value="Vegetarian" checked>
+                    <div class="diet-icon">🥦</div>
+                    <div style="font-weight:600;font-size:0.875rem">Vegetarian</div>
+                    <div style="font-size:0.75rem;color:var(--primary);font-weight:700">~1.5 kg/day</div>
+                  </label>
+                </div>
+                <div class="col-4">
+                  <label class="diet-option" id="diet-nonveg" onclick="selectDiet('Non-Vegetarian')">
+                    <input type="radio" name="diet" value="Non-Vegetarian">
+                    <div class="diet-icon">🍖</div>
+                    <div style="font-weight:600;font-size:0.875rem">Non-Veg</div>
+                    <div style="font-size:0.75rem;color:var(--accent-warm);font-weight:700">~3.3 kg/day</div>
+                  </label>
+                </div>
+                <div class="col-4">
+                  <label class="diet-option" id="diet-vegan" onclick="selectDiet('Vegan')">
+                    <input type="radio" name="diet" value="Vegan">
+                    <div class="diet-icon">🌱</div>
+                    <div style="font-weight:600;font-size:0.875rem">Vegan</div>
+                    <div style="font-size:0.75rem;color:var(--primary);font-weight:700">~0.9 kg/day</div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel 5: Waste -->
+            <div class="calc-panel" id="panel4">
+              <div class="section-card-header">
+                <div class="section-card-icon" style="background:rgba(255,214,0,0.12);color:#f9a825"><i class="fas fa-trash"></i></div>
+                <div class="section-card-title">Waste Generation</div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label">Household Waste (kg/week)</label>
+                  <input type="number" class="app-form-control" id="waste_kg" placeholder="0" min="0" value="0">
+                </div></div>
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label">Recycling Rate (%)</label>
+                  <input type="range" class="range-slider mt-2" id="recycle_pct" min="0" max="100" value="30" oninput="document.getElementById('recyclePctVal').textContent=this.value+'%'">
+                  <div class="d-flex justify-content-between mt-1" style="font-size:0.75rem;color:var(--text-secondary)">
+                    <span>0%</span>
+                    <span id="recyclePctVal" style="color:var(--primary);font-weight:700">30%</span>
+                    <span>100%</span>
+                  </div>
+                </div></div>
+              </div>
+            </div>
+
+            <!-- Panel 6: Shopping -->
+            <div class="calc-panel" id="panel5">
+              <div class="section-card-header">
+                <div class="section-card-icon" style="background:rgba(156,39,176,0.12);color:#6a1b9a"><i class="fas fa-shopping-bag"></i></div>
+                <div class="section-card-title">Shopping & Lifestyle</div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label">Monthly Shopping Spend (₹)</label>
+                  <input type="number" class="app-form-control" id="shopping_spend" placeholder="0" min="0" value="0">
+                </div></div>
+                <div class="col-md-6"><div class="app-form-group">
+                  <label class="app-form-label">Online Orders / Month</label>
+                  <input type="number" class="app-form-control" id="online_orders" placeholder="0" min="0" value="0">
+                </div></div>
+              </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="d-flex justify-content-between mt-4 pt-3 border-top" style="border-color:rgba(0,200,83,0.1)!important">
+              <button class="btn-glass" id="prevBtn" onclick="changeStep(-1)" style="display:none">
+                <i class="fas fa-arrow-left"></i> Previous
+              </button>
+              <button class="btn-primary-custom ms-auto" id="nextBtn" onclick="changeStep(1)">
+                <span>Next Section</span> <i class="fas fa-arrow-right"></i>
+              </button>
+              <button class="btn-primary-custom ms-auto" id="calculateBtn" style="display:none" onclick="calculateFootprint()">
+                <span>Calculate Score</span> <i class="fas fa-calculator"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Live Preview -->
+        <div class="col-xl-4">
+          <!-- Real-time Estimate -->
+          <div class="result-card mb-4">
+            <div class="result-card-content" style="position:relative;z-index:1">
+              <div style="font-size:0.75rem;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Total Estimated Emission</div>
+              <div class="result-value" id="liveResult">0.0</div>
+              <div class="result-unit">kg CO₂ per day</div>
+              <div class="mt-3 d-flex justify-content-center gap-3" style="font-size:0.8rem;color:rgba(255,255,255,0.7)">
+                <span>🌡️ <b style="color:white" id="yearlyResult">0</b> kg/year</span>
+                <span>🌳 = <b style="color:white" id="treesResult">0</b> trees</span>
+              </div>
+              <div id="levelBadge" class="pill pill-success mt-3 mx-auto" style="display:inline-flex;font-size:0.75rem">Calculating...</div>
+            </div>
+          </div>
+
+          <!-- Breakdown card -->
+          <div class="section-card">
+            <div class="section-card-header">
+              <div class="section-card-icon icon-green"><i class="fas fa-chart-pie"></i></div>
+              <div class="section-card-title">Live Breakdown</div>
+            </div>
+            <div id="breakdownList" class="d-flex flex-column gap-2">
+              <div style="color:var(--text-secondary);font-size:0.85rem;text-align:center;padding:20px 0">
+                <i class="fas fa-arrow-left me-1"></i> Fill the form to see breakdown
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="toast-container"></div>
+
+<script src="js/app.js"></script>
+<script>
+  renderSidebar('calculator.html');
+  renderTopbar('Carbon Calculator', 'Carbon Calculator');
+
+  // ---- Step Navigation ----
+  let currentStep = 0;
+  const totalSteps = 6;
+  let selectedDiet = 'Vegetarian';
+
+  function changeStep(dir) {
+    const panels = document.querySelectorAll('.calc-panel');
+    const dots   = document.querySelectorAll('.step-dot');
+    const lines  = document.querySelectorAll('.step-line');
+
+    panels[currentStep].classList.remove('active');
+    dots[currentStep].classList.remove('active');
+    dots[currentStep].classList.add('done');
+    if (currentStep > 0) lines[currentStep-1].classList.add('done');
+
+    currentStep = Math.max(0, Math.min(totalSteps-1, currentStep + dir));
+    panels[currentStep].classList.add('active');
+    dots[currentStep].classList.add('active');
+    dots[currentStep].classList.remove('done');
+
+    document.getElementById('prevBtn').style.display = currentStep > 0 ? 'inline-flex' : 'none';
+    document.getElementById('nextBtn').style.display = currentStep < totalSteps-1 ? 'inline-flex' : 'none';
+    document.getElementById('calculateBtn').style.display = currentStep === totalSteps-1 ? 'inline-flex' : 'none';
+
+    updateLivePreview();
+  }
+
+  function selectDiet(type) {
+    selectedDiet = type;
+    document.querySelectorAll('.diet-option').forEach(el => el.classList.remove('selected'));
+    document.getElementById(`diet-${type === 'Non-Vegetarian' ? 'nonveg' : type.toLowerCase()}`).classList.add('selected');
+    updateLivePreview();
+  }
+
+  // ---- Carbon Emission Factors ----
+  const EF = {
+    bike: 0, car: 0.21, bus: 0.089, train: 0.041, flight: 255,
+    electricity: 0.82, lpg: 3.0, ac: 0.82 * 1.5,
+    water: 0.000298, diet: { Vegetarian: 1.5, 'Non-Vegetarian': 3.3, Vegan: 0.9 },
+    waste: 0.57, shopping: 0.006
+  };
+
+  function calcEmissions() {
+    const g = id => parseFloat(document.getElementById(id)?.value) || 0;
+    const transport = g('bike_km')*EF.bike + g('car_km')*EF.car + g('bus_km')*EF.bus + g('train_km')*EF.train + (g('flight_hours')*EF.flight/30);
+    const energy    = (g('electricity_kwh')/30)*EF.electricity + (g('lpg_kg')/30)*EF.lpg + g('ac_hours')*EF.ac/30;
+    const water     = g('water_liters')*EF.water;
+    const food      = EF.diet[selectedDiet];
+    const waste     = (g('waste_kg')/7)*EF.waste*(1-(parseInt(document.getElementById('recycle_pct')?.value||30)/100));
+    const shopping  = (g('shopping_spend')/30)*EF.shopping + g('online_orders')*0.5/30;
+    return { transport, energy, water, food, waste, shopping };
+  }
+
+  function updateLivePreview() {
+    const b = calcEmissions();
+    const total = Object.values(b).reduce((a,c)=>a+c,0);
+    document.getElementById('liveResult').textContent = total.toFixed(2);
+    document.getElementById('yearlyResult').textContent = (total*365).toFixed(0);
+    document.getElementById('treesResult').textContent = Math.ceil(total*365/21);
+
+    const lb = document.getElementById('levelBadge');
+    if (total < 5) { lb.textContent = '🌱 Excellent'; lb.className = 'pill pill-success mt-3 mx-auto'; }
+    else if (total < 10) { lb.textContent = '⚠️ Moderate'; lb.className = 'pill pill-warning mt-3 mx-auto'; }
+    else { lb.textContent = '🚨 High Impact'; lb.className = 'pill pill-danger mt-3 mx-auto'; }
+
+    const icons = { transport:'fa-car', energy:'fa-bolt', water:'fa-tint', food:'fa-utensils', waste:'fa-trash', shopping:'fa-shopping-bag' };
+    document.getElementById('breakdownList').innerHTML = Object.entries(b).map(([k,v]) =>
+      `<div class="d-flex align-items-center gap-3">
+         <div style="width:28px;height:28px;border-radius:6px;background:rgba(0,200,83,0.1);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:0.7rem;flex-shrink:0"><i class="fas ${icons[k]}"></i></div>
+         <div class="flex-grow-1" style="font-size:0.8rem;font-weight:600;text-transform:capitalize">${k}</div>
+         <div style="font-weight:700;font-size:0.875rem;color:var(--accent-warm)">${v.toFixed(2)} kg</div>
+         <div style="width:50px;font-size:0.7rem;color:var(--text-secondary);text-align:right">${total>0?((v/total)*100).toFixed(0):0}%</div>
+       </div>`).join('');
+  }
+
+  // Trigger update when inputs change
+  document.addEventListener('input', updateLivePreview);
+
+  function calculateFootprint() {
+    const b = calcEmissions();
+    const total = Object.values(b).reduce((a,c)=>a+c,0);
+    showAppToast(`Total: ${total.toFixed(2)} kg CO₂/day. Saving to history & generating AI tips...`, 'success');
+    setTimeout(()=> window.location.href='recommendations.html', 2000);
+  }
+</script>
+</body>
+</html>
