@@ -6,26 +6,30 @@
 
 import os
 import random
+import re
 import string
 import logging
 from functools import wraps
 from flask import Flask, request, jsonify, session, redirect, url_for, send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
 import mysql.connector
 from mysql.connector import Error
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+load_dotenv()
+
 app = Flask(__name__, static_folder='.', static_url_path='')
 app.secret_key = os.urandom(24)
 
 # Database Configuration Defaults
-DB_HOST = os.environ.get('DB_HOST', 'localhost')
-DB_USER = os.environ.get('DB_USER', 'root')
-DB_PASSWORD = os.environ.get('DB_PASSWORD', '')
-DB_NAME = os.environ.get('DB_NAME', 'ecotrack_db')
-DB_PORT = int(os.environ.get('DB_PORT', '3306'))
+DB_HOST = os.environ.get('DB_HOST') or 'localhost'
+DB_USER = os.environ.get('DB_USER') or 'root'
+DB_PASSWORD = os.environ.get('DB_PASSWORD') or ''
+DB_NAME = os.environ.get('DB_NAME') or 'ecotrack_db'
+DB_PORT = int(os.environ.get('DB_PORT') or '3306')
 
 def get_db_connection():
     """Establishes connection to MySQL database with graceful fallback."""
@@ -44,7 +48,42 @@ def get_db_connection():
         logging.error(f"MySQL connection failed: {e}. Running in Mock Mode.")
     return None
 
+
+def initialize_database():
+    """Initializes the EcoTrack schema in the configured MySQL database if available."""
+    conn = get_db_connection()
+    if not conn:
+        logging.warning("Database unavailable; schema initialization skipped.")
+        return False
+
+    try:
+        schema_path = os.path.join(os.path.dirname(__file__), 'database', 'schema.sql')
+        if not os.path.exists(schema_path):
+            logging.warning("Schema file not found at %s", schema_path)
+            return False
+
+        with open(schema_path, 'r', encoding='utf-8') as handle:
+            statements = []
+            for raw_statement in handle.read().split(';'):
+                statement = re.sub(r'--.*', '', raw_statement).strip()
+                if statement:
+                    statements.append(statement)
+
+        cursor = conn.cursor()
+        for statement in statements:
+            cursor.execute(statement)
+        conn.commit()
+        logging.info("Database schema initialized successfully.")
+        return True
+    except Error as e:
+        logging.error(f"Database schema initialization failed: {e}")
+        return False
+    finally:
+        conn.close()
+
 # Mock Database for testing in case MySQL is not running
+initialize_database()
+
 mock_db = {
     'users': [
         # Prepopulated mock verified user: test@example.com / Password123
@@ -164,7 +203,12 @@ def api_register():
             logging.info(f"===> EMAIL VERIFICATION CODE FOR {email}: {v_code} <===")
             session['pending_email'] = email
             
-            return jsonify({'success': True, 'message': 'Registration successful. Check console/terminal for verification code.'})
+            return jsonify({
+                'success': True,
+                'message': 'Registration successful.',
+                'verification_code': v_code,
+                'email': email
+            })
         except Error as e:
             return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
         finally:
@@ -189,7 +233,12 @@ def api_register():
         mock_db['users'].append(new_user)
         logging.info(f"===> MOCK EMAIL VERIFICATION CODE FOR {email}: {v_code} <===")
         session['pending_email'] = email
-        return jsonify({'success': True, 'message': 'Registration successful (Mock Database). Check console for code.'})
+        return jsonify({
+            'success': True,
+            'message': 'Registration successful.',
+            'verification_code': v_code,
+            'email': email
+        })
 
 @app.route('/api/verify-email', methods=['POST'])
 def api_verify():

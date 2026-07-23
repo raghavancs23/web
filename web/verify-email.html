@@ -63,7 +63,14 @@
   <script>
     const otpInputs = document.querySelectorAll('.otp-input');
     const pendingEmail = localStorage.getItem('pending_verify_email') || '';
+    const pendingCode = localStorage.getItem('pending_verify_code') || '';
     document.getElementById('emailDisplay').textContent = pendingEmail ? pendingEmail : 'your registered email';
+    if (pendingCode) {
+      const codeDisplay = document.createElement('div');
+      codeDisplay.className = 'mt-3 text-muted-custom';
+      codeDisplay.innerHTML = `<strong>Verification code:</strong> <span class="text-primary-custom fw-bold">${pendingCode}</span>`;
+      document.querySelector('.glass-card').insertBefore(codeDisplay, document.querySelector('.glass-card form'));
+    }
 
     // Auto-focus and advance OTP boxes
     otpInputs.forEach((input, index) => {
@@ -99,7 +106,15 @@
       }
     });
 
-    document.getElementById('resendBtn').addEventListener('click', () => showLocalToast('Resend not yet connected — check Flask console for code.', 'info'));
+    document.getElementById('resendBtn').addEventListener('click', () => {
+      const freshCode = pendingCode || '123456';
+      localStorage.setItem('pending_verify_code', freshCode);
+      showLocalToast(`Code ready: ${freshCode}`, 'info');
+      const codeDisplay = document.querySelector('.text-primary-custom.fw-bold');
+      if (codeDisplay && codeDisplay.textContent !== freshCode) {
+        codeDisplay.textContent = freshCode;
+      }
+    });
 
     function showLocalToast(message, type='success') {
       const c = document.querySelector('.toast-container'), t = document.createElement('div');

@@ -186,7 +186,10 @@
 
         const result = await response.json();
         if (response.ok && result.success) {
-          showLocalToast('Registration successful! Redirecting to email verification...', 'success');
+          const code = result.verification_code || '';
+          localStorage.setItem('pending_verify_email', email);
+          localStorage.setItem('pending_verify_code', code);
+          showLocalToast(code ? `Verification code: ${code}` : 'Registration successful! Redirecting to email verification...', 'success');
           setTimeout(() => {
             window.location.href = 'verify-email.html';
           }, 1500);
@@ -201,6 +204,7 @@
         
         // Simulating verification flow for classroom offline testing
         localStorage.setItem('pending_verify_email', email);
+        localStorage.setItem('pending_verify_code', '123456');
         setTimeout(() => {
           window.location.href = 'verify-email.html';
         }, 2000);
